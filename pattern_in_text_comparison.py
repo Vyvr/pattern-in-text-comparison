@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import string, random
 
 
-random.seed(random.randint(1, 1000000000)) # creating seed
+random.seed(random.randint(1, 1000000000))
 
 counter_sunday = 0
 counter_naive = 0
@@ -153,6 +153,11 @@ def createSearchedWord(text, size):
     return text[random_starting_point : random_starting_point + size]
 
 #==============================Program=========================================
+print("Choose chart type: ")
+print("[stts] Speed to text size")
+print("[stsw] Speed to searched word size")
+print("[stas] Speed to alphabet size")
+chartType = input("Chart type: ")
 
 alphabet = string.ascii_letters + string.digits
 T = ''
@@ -162,98 +167,97 @@ speed_to_text_size_chart = True
 speed_to_searched_word_size_chart = False
 speed_to_alphabet_size_chart = False
 
-if speed_to_text_size_chart:
-    naive_counter_list = []
-    sunday_counter_list = []
-    kmp_counter_list = []
-    text_length_list = []
-    current_text_size = 0
-    while current_text_size <= 1000:
-        current_text_size += 1
-        T = createText(T, alphabet, 1, 'append')
-        W = createSearchedWord(T, 3)
+match chartType:
+    case "stts":
+        naive_counter_list = []
+        sunday_counter_list = []
+        kmp_counter_list = []
+        text_length_list = []
+        current_text_size = 0
+        while current_text_size <= 1000:
+            current_text_size += 1
+            T = createText(T, alphabet, 1, 'append')
+            W = createSearchedWord(T, 3)
 
-        counter_naive, counter_sunday, counter_KMP = 0, 0, 0
-        naiveAlgorithm(T, W)
-        sundayAlgorithm(T, W)
-        KMPAlgorithm(T, W)
+            counter_naive, counter_sunday, counter_KMP = 0, 0, 0
+            naiveAlgorithm(T, W)
+            sundayAlgorithm(T, W)
+            KMPAlgorithm(T, W)
 
-        naive_counter_list.append(counter_naive)
-        sunday_counter_list.append(counter_sunday)
-        kmp_counter_list.append(counter_KMP)
+            naive_counter_list.append(counter_naive)
+            sunday_counter_list.append(counter_sunday)
+            kmp_counter_list.append(counter_KMP)
 
-        text_length_list.append(len(T))
+            text_length_list.append(len(T))
 
-    plt.title("Zależności między algorytmami szukającymi wzorca")
-    plt.plot(text_length_list, naive_counter_list, 'green', label='Naive algorithm')
-    plt.plot(text_length_list, sunday_counter_list, 'red', label='Sunday algorithm')
-    plt.plot(text_length_list, kmp_counter_list, 'blue', label='KMP algorithm')
-    plt.legend(loc='upper left')
-    fig = plt.gcf()
-    fig.set_size_inches(16, 9)
-    fig.savefig('speed_to_text_size_chart.png', dpi=300)
+        plt.title("Speed to text size")
+        plt.plot(text_length_list, naive_counter_list, 'green', label='Naive algorithm')
+        plt.plot(text_length_list, sunday_counter_list, 'red', label='Sunday algorithm')
+        plt.plot(text_length_list, kmp_counter_list, 'blue', label='KMP algorithm')
+        plt.legend(loc='upper left')
+        fig = plt.gcf()
+        fig.set_size_inches(16, 9)
+        fig.savefig('speed_to_text_size_chart.png', dpi=300)
 
+    case "stsw":
+        naive_counter_list = []
+        sunday_counter_list = []
+        kmp_counter_list = []
+        searched_word_length_list = []
+        current_searched_size = 0
+        T = createText(T, alphabet, 10_000, 'new')
+        while current_searched_size <= 1_000:
+            current_searched_size += 1
+            W = createSearchedWord(T, current_searched_size)
 
-if speed_to_searched_word_size_chart:
-    naive_counter_list = []
-    sunday_counter_list = []
-    kmp_counter_list = []
-    searched_word_length_list = []
-    current_searched_size = 0
-    T = createText(T, alphabet, 10_000, 'new')
-    while current_searched_size <= 1_000:
-        current_searched_size += 1
-        W = createSearchedWord(T, current_searched_size)
+            counter_naive, counter_sunday, counter_KMP = 0, 0, 0
+            naiveAlgorithm(T, W)
+            sundayAlgorithm(T, W)
+            KMPAlgorithm(T, W)
 
-        counter_naive, counter_sunday, counter_KMP = 0, 0, 0
-        naiveAlgorithm(T, W)
-        sundayAlgorithm(T, W)
-        KMPAlgorithm(T, W)
+            naive_counter_list.append(counter_naive)
+            sunday_counter_list.append(counter_sunday)
+            kmp_counter_list.append(counter_KMP)
+            searched_word_length_list.append(len(W))
 
-        naive_counter_list.append(counter_naive)
-        sunday_counter_list.append(counter_sunday)
-        kmp_counter_list.append(counter_KMP)
-        searched_word_length_list.append(len(W))
+        plt.title("Speed to searched word size")
+        plt.plot(searched_word_length_list, naive_counter_list, 'green', label='Naive algorithm')
+        plt.plot(searched_word_length_list, sunday_counter_list, 'red', label='Sunday algorithm')
+        plt.plot(searched_word_length_list, kmp_counter_list, 'blue', label='KMP algorithm')
+        plt.legend(loc='upper left')
+        fig = plt.gcf()
+        fig.set_size_inches(16, 9)
+        fig.savefig('speed_to_searched_word_size_chart.png', dpi=300)
+    
+    case "stas":
+        naive_counter_list = []
+        sunday_counter_list = []
+        kmp_counter_list = []
+        alphabet_length_list = []
+        current_alphabet_size = 20
 
-    plt.title("Zależności między algorytmami szukającymi wzorca")
-    plt.plot(searched_word_length_list, naive_counter_list, 'green', label='Naive algorithm')
-    plt.plot(searched_word_length_list, sunday_counter_list, 'red', label='Sunday algorithm')
-    plt.plot(searched_word_length_list, kmp_counter_list, 'blue', label='KMP algorithm')
-    plt.legend(loc='upper left')
-    fig = plt.gcf()
-    fig.set_size_inches(16, 9)
-    fig.savefig('speed_to_searched_word_size_chart.png', dpi=300)
+        while current_alphabet_size <= len(alphabet):
+            current_alphabet_size += 1
+            current_alphabet = alphabet[0 : current_alphabet_size]
 
+            T = createText(T, alphabet, 500, 'new')
+            W = createSearchedWord(T, 5)
 
-if speed_to_alphabet_size_chart:
-    naive_counter_list = []
-    sunday_counter_list = []
-    kmp_counter_list = []
-    alphabet_length_list = []
-    current_alphabet_size = 20
+            counter_naive, counter_sunday, counter_KMP = 0, 0, 0
+            naiveAlgorithm(T, W)
+            sundayAlgorithm(T, W)
+            KMPAlgorithm(T, W)
 
-    while current_alphabet_size <= len(alphabet):
-        current_alphabet_size += 1
-        current_alphabet = alphabet[0 : current_alphabet_size]
+            naive_counter_list.append(counter_naive)
+            sunday_counter_list.append(counter_sunday)
+            kmp_counter_list.append(counter_KMP)
+            alphabet_length_list.append(len(current_alphabet))
 
-        T = createText(T, alphabet, 500, 'new')
-        W = createSearchedWord(T, 5)
-
-        counter_naive, counter_sunday, counter_KMP = 0, 0, 0
-        naiveAlgorithm(T, W)
-        sundayAlgorithm(T, W)
-        KMPAlgorithm(T, W)
-
-        naive_counter_list.append(counter_naive)
-        sunday_counter_list.append(counter_sunday)
-        kmp_counter_list.append(counter_KMP)
-        alphabet_length_list.append(len(current_alphabet))
-
-    plt.title("Zależności między algorytmami szukającymi wzorca")
-    plt.plot(alphabet_length_list, naive_counter_list, 'green', label='Naive algorithm')
-    plt.plot(alphabet_length_list, sunday_counter_list, 'red', label='Sunday algorithm')
-    plt.plot(alphabet_length_list, kmp_counter_list, 'blue', label='KMP algorithm')
-    plt.legend(loc='upper left')
-    fig = plt.gcf()
-    fig.set_size_inches(16, 9)
-    fig.savefig('speed_to_alphabet_size_chart.png', dpi=300)
+        plt.title("Speed to alphabet size")
+        plt.plot(alphabet_length_list, naive_counter_list, 'green', label='Naive algorithm')
+        plt.plot(alphabet_length_list, sunday_counter_list, 'red', label='Sunday algorithm')
+        plt.plot(alphabet_length_list, kmp_counter_list, 'blue', label='KMP algorithm')
+        plt.legend(loc='upper left')
+        fig = plt.gcf()
+        fig.set_size_inches(16, 9)
+        fig.savefig('speed_to_alphabet_size_chart.png', dpi=300)
